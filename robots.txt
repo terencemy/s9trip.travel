@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Block system / non-content paths (optional but clean)
+Disallow: /assets/private/
+Disallow: /tmp/
+
+# Sitemap index (MASTER)
+Sitemap: https://www.s9trip.com/sitemap-index.xml

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Website Setup | S9Trip</title>
+
+  <meta name="description" content="Professional website setup for freelancers and small businesses. Clear pricing, SEO-ready websites, full ownership, and no monthly platform fees.">
+  <meta name="robots" content="index, follow">
+
+  <!-- hreflang -->
+  <link rel="alternate" hreflang="en" href="https://www.s9trip.com/articles/website-setup.html">
+  <link rel="alternate" hreflang="zh-Hans" href="https://www.s9trip.com/articles/website-setup-zh.html">
+  <link rel="alternate" hreflang="x-default" href="https://www.s9trip.com/articles/website-setup.html">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Website Setup | SEO-Ready Websites">
+  <meta property="og:description" content="Clean, fast, SEO-friendly websites with full ownership. No lock-in. No monthly fees.">
+  <meta property="og:type" content="website">
+
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GDNM2V4CS2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-GDNM2V4CS2');
+  </script>
+
+  <!-- Stripe Buy Button -->
+  <script async src="https://js.stripe.com/v3/buy-button.js"></script>
+
+  <!-- Malaysia Airlines Navy & Gold Style -->
+  <style>
+    :root {
+      --navy: #0b1f3a;
+      --gold: #c9a14a;
+      --light-gold: #e6d19c;
+      --text-dark: #1a1a1a;
+      --text-muted: #555;
+      --bg-light: #f8f9fb;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text-dark);
+      background-color: #ffffff;
+      line-height: 1.7;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--navy), #06162b);
+      color: #ffffff;
+      padding: 4rem 1.5rem;
+      text-align: center;
+      position: relative;
+    }
+
+    /* Language switch */
+    .lang-switch {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      font-size: 0.9rem;
+    }
+
+    .lang-switch a,
+    .lang-switch span {
+      color: rgba(255,255,255,.85);
+      text-decoration: none;
+      margin-left: 6px;
+    }
+
+    .lang-switch .active {
+      color: var(--gold);
+      font-weight: 600;
+      cursor: default;
+    }
+
+    header h1 {
+      margin: 0 0 0.5rem;
+      font-size: 2.2rem;
+      letter-spacing: 0.5px;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 1.1rem;
+      color: var(--light-gold);
+    }
+
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+    }
+
+    section {
+      margin-bottom: 3.5rem;
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      color: var(--navy);
+      margin-bottom: 1rem;
+      border-left: 4px solid var(--gold);
+      padding-left: 0.75rem;
+    }
+
+    h3 {
+      color: var(--navy);
+      margin-bottom: 0.3rem;
+      font-size: 1.3rem;
+    }
+
+    p {
+      margin: 0.5rem 0 1rem;
+      color: var(--text-muted);
+    }
+
+    ul {
+      padding-left: 1.2rem;
+      margin: 0.5rem 0 1.2rem;
+    }
+
+    ul li {
+      margin-bottom: 0.4rem;
+    }
+
+    article {
+      background-color: var(--bg-light);
+      border: 1px solid #e2e5ec;
+      border-radius: 10px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .price {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .pricing-flex {
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
+    }
+
+    .pricing-details { flex: 2; }
+
+    .pricing-payment {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .pricing-flex { flex-direction: column; }
+      .pricing-payment { justify-content: flex-start; }
+    }
+
+    footer {
+      background-color: var(--navy);
+      color: #ffffff;
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    footer p {
+      margin: 0;
+      color: #d6d6d6;
+    }
+
+    /* Floating WhatsApp */
+    .whatsapp {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: var(--navy);
+      color: #ffffff;
+      padding: 14px 22px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      text-decoration: none;
+      box-shadow: 0 14px 30px rgba(11,31,58,.35);
+      border: 1px solid var(--gold);
+      z-index: 9999;
+    }
+
+    .whatsapp span {
+      color: var(--gold);
+      font-weight: 600;
+      margin-left: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="lang-switch">
+    <span class="active">EN</span> |
+    <a href="website-setup-zh.html">中文</a>
+  </div>
+
+  <h1>Website Setup & Publishing Support</h1>
+  <p>Simple · Fast · Fully Yours</p>
+</header>
+
+<main>
+
+<section>
+  <h2>Who This Is For</h2>
+  <p>
+    Designed for <strong>freelancers, consultants, and small business owners</strong>
+    who want a professional website without subscriptions or platform lock-in.
+  </p>
+  <ul>
+    <li>Freelancers building credibility online</li>
+    <li>Consultants and coaches publishing services or content</li>
+    <li>Small businesses that want full website ownership</li>
+    <li>Non-technical founders who value clarity</li>
+  </ul>
+</section>
+
+<section>
+  <h2>How Website Setup Works</h2>
+  <ul>
+    <li><strong>Step 1:</strong> Confirm package and scope</li>
+    <li><strong>Step 2:</strong> 50% upfront payment to begin</li>
+    <li><strong>Step 3:</strong> Website structure and SEO setup</li>
+    <li><strong>Step 4:</strong> Review and revisions</li>
+    <li><strong>Step 5:</strong> Website published and handed over</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Website Setup Pricing</h2>
+
+  <article class="pricing-flex">
+    <div class="pricing-details">
+      <h3>Starter — Website Setup</h3>
+      <div class="price">$650</div>
+      <p>Best for freelancers and solo professionals.</p>
+      <ul>
+        <li>1–3 page static website</li>
+        <li>Mobile-friendly layout</li>
+        <li>SEO-ready HTML structure</li>
+        <li>Domain & GitHub Pages setup</li>
+        <li>Google Analytics installed</li>
+        <li>Live website handover</li>
+      </ul>
+      <p><em>Timeline: 5–7 business days</em></p>
+    </div>
+
+    <div class="pricing-payment">
+      <stripe-buy-button
+        buy-button-id="buy_btn_1SkfHbBjPDWSit5NQNlkr2Kt"
+        publishable-key="pk_live_51SY5FmBjPDWSit5Ns8phOmoGlGm3UaFctXthIBqpQX02DOkdQglkZnomZiJkFQfSbuqctbas1ArNMzVv32072Qf000gFM7CAJN">
+      </stripe-buy-button>
+    </div>
+  </article>
+
+  <article class="pricing-flex">
+    <div class="pricing-details">
+      <h3>Standard — Content Website (Most Popular)</h3>
+      <div class="price">$1,250</div>
+      <p>Ideal for content-driven freelancers and small businesses.</p>
+      <ul>
+        <li>5–7 structured pages</li>
+        <li>SEO-optimized headings & metadata</li>
+        <li>Google Analytics & Search Console setup</li>
+        <li>Clear navigation and hierarchy</li>
+        <li>2 revision rounds</li>
+      </ul>
+      <p><em>Timeline: 7–10 business days</em></p>
+    </div>
+
+    <div class="pricing-payment">
+      <stripe-buy-button
+        buy-button-id="buy_btn_1SkfZbBjPDWSit5NZvoznyuL"
+        publishable-key="pk_live_51SY5FmBjPDWSit5Ns8phOmoGlGm3UaFctXthIBqpQX02DOkdQglkZnomZiJkFQfSbuqctbas1ArNMzVv32072Qf000gFM7CAJN">
+      </stripe-buy-button>
+    </div>
+  </article>
+
+</section>
+<section>
+  <h2>Optional Add-Ons</h2>
+  <ul>
+    <li>Additional page: <strong>$120 / page</strong></li>
+    <li>Bilingual structure (EN / 中文): <strong>from $350</strong></li>
+    <li>Content formatting & cleanup: <strong>from $150</strong></li>
+    <li>Updates & support: <strong>$90 / page</strong></li>
+  </ul>
+</section>
+
+<section>
+  <h2>Frequently Asked Questions</h2>
+
+  <article>
+    <h3>What is content formatting & cleanup?</h3>
+    <p>
+      It means organizing your existing text and images into a clean, readable,
+      and professional website layout — without rewriting your content.
+    </p>
+  </article>
+</section>
+
+<section>
+  <h2>Why Clients Choose This</h2>
+  <ul>
+    <li>No monthly website fees</li>
+    <li>Full ownership of your site</li>
+    <li>Fast-loading and SEO-friendly</li>
+    <li>No Wix or Squarespace lock-in</li>
+    <li>Built for long-term publishing</li>
+  </ul>
+</section>
+  <section>
+  <h2>Frequently Asked Questions</h2>
+    <article>
+    <h3>What does “No Wix or Squarespace lock-in” mean?</h3>
+    <p>
+      You fully own your website and are not tied to monthly platform subscriptions.
+      You can move or update your site anytime without restrictions.
+    </p>
+  </article>
+</section>
+<section>
+  <h2>How Much Does Website Setup Cost?</h2>
+  <p>
+    Professional website setup typically costs between <strong>$650 and $1,250</strong>,
+    depending on page count and SEO preparation.
+  </p>
+  <p>
+    This is a one-time cost with full ownership and no monthly platform fees.
+  </p>
+</section>
+
+<section>
+  <h2>Website Setup SEO: What’s Included</h2>
+  <ul>
+    <li>Clean HTML and heading structure</li>
+    <li>SEO-friendly titles and metadata</li>
+    <li>Fast-loading static pages</li>
+    <li>Mobile-friendly layout</li>
+    <li>Analytics and search readiness</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Payment & Process</h2>
+  <ul>
+    <li>Payment via Wise or Stripe</li>
+    <li>Clear scope and timeline</li>
+    <li>50% upfront, 50% after website is published</li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  <p>
+    &copy; 2026 S9Trip · Website Setup & Publishing Support<br>
+    Fast · SEO-Ready · Fully Owned Websites
+  </p>
+</footer>
+
+<a class="whatsapp"
+   href="https://wa.me/60123632338?text=Hi%20Terence,%20I%20would%20like%20to%20enquire%20about%20Website%20Setup%20Support.">
+  WhatsApp <span>Support</span>
+</a>
+
+</body>
+</html>
