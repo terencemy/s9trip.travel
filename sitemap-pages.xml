@@ -8,7 +8,7 @@
   <!-- ========================= -->
   <url>
     <loc>https://www.s9trip.com/</loc>
-    <lastmod>2026-01-01</lastmod>
+    <lastmod>2026-03-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.00</priority>
 
@@ -22,7 +22,7 @@
   <!-- ========================= -->
   <url>
     <loc>https://www.s9trip.com/zh.html</loc>
-    <lastmod>2026-01-01</lastmod>
+    <lastmod>2026-03-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
 
@@ -36,7 +36,7 @@
   <!-- ========================= -->
   <url>
     <loc>https://www.s9trip.com/about.html</loc>
-    <lastmod>2026-01-01</lastmod>
+    <lastmod>2026-03-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
 
@@ -50,13 +50,26 @@
   <!-- ========================= -->
   <url>
     <loc>https://www.s9trip.com/about-zh.html</loc>
-    <lastmod>2026-01-01</lastmod>
+    <lastmod>2026-03-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
 
     <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://www.s9trip.com/about-zh.html" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.s9trip.com/about.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.s9trip.com/about.html" />
+  </url>
+
+  <!-- ========================= -->
+  <!-- Operating Principles -->
+  <!-- ========================= -->
+  <url>
+    <loc>https://www.s9trip.com/operating-principles.html</loc>
+    <lastmod>2026-03-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.60</priority>
+
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.s9trip.com/operating-principles.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.s9trip.com/operating-principles.html" />
   </url>
 
 </urlset>

@@ -5,6 +5,10 @@
   <title>旅行咨询服务｜S9Trip</title>
 
   <meta name="description" content="S9Trip 提供仅限建议的旅行咨询服务，包括行程规划、本地资讯与 WhatsApp 支持。不代订、不带团。">
+  <link rel="canonical" href="https://www.s9trip.com/articles/trip-consultation-zh.html">
+  <link rel="alternate" hreflang="zh-Hans" href="https://www.s9trip.com/articles/trip-consultation-zh.html">
+  <link rel="alternate" hreflang="en" href="https://www.s9trip.com/articles/trip-consultation.html">
+  <link rel="alternate" hreflang="x-default" href="https://www.s9trip.com/articles/trip-consultation.html">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- ✅ Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-GDNM2V4CS2"></script>
@@ -38,6 +42,29 @@
       max-width: 920px;
       margin: auto;
       padding: 18px;
+    }
+
+    /* ===== Language Switch ===== */
+    .lang-switch {
+      text-align: right;
+      margin-bottom: 14px;
+      font-size: 0.85rem;
+    }
+
+    .lang-switch a,
+    .lang-switch span {
+      text-decoration: none;
+      font-weight: 600;
+      color: var(--navy);
+    }
+
+    .lang-switch .active {
+      color: var(--gold);
+    }
+
+    .lang-switch a:hover {
+      text-decoration: underline;
+      color: var(--gold);
     }
 
     header {
@@ -135,6 +162,12 @@
 <body>
 
 <div class="container">
+
+  <!-- Language Option -->
+  <div class="lang-switch">
+    <a href="trip-consultation.html">English</a> |
+    <span class="active">中文</span>
+  </div>
 
   <header>
     <h1>旅行咨询服务（仅提供建议）</h1>
