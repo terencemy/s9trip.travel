@@ -11,9 +11,9 @@ const PORT = process.env.PORT || 3000;
 // Serve static files from the root directory
 app.use(express.static(__dirname));
 
-// Handle routes for HTML files without .html extension if needed, 
-// but since the user has links with .html, we can just serve them as static.
-// However, we should ensure index.html is served for the root.
+// Explicitly serve the assets directory
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
