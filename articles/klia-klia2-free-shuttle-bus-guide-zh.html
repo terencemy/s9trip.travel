@@ -99,6 +99,53 @@ footer{
   color:#6b7280;
   margin:30px 0 10px;
 }
+
+/* WhatsApp CTA */
+.whatsapp {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #25D366;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 10px 25px rgba(37,211,102,0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+}
+.whatsapp:hover { transform: scale(1.05); }
+.whatsapp span { font-size: 0.9rem; }
+
+/* Back to Top */
+.back-to-top {
+  position: fixed;
+  bottom: 90px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 999;
+}
+.back-to-top.show {
+  opacity: 1;
+  visibility: visible;
+}
 </style>
 </head>
 
@@ -164,6 +211,26 @@ footer{
 <footer>
 由 <strong style="color:#C9A24D;">S9Trip.com</strong> 整理 · 更聪明的旅行方式，更顺畅的机场衔接
 </footer>
+
+<button class="back-to-top" onclick="scrollToTop()" aria-label="回到顶部">↑</button>
+
+<a class="whatsapp"
+   href="https://wa.me/60123632338?text=你好%20Terence，我想咨询马来西亚旅游。">
+  WhatsApp <span>咨询</span>
+</a>
+
+<script>
+const backToTop = document.querySelector('.back-to-top');
+
+window.addEventListener('scroll', ()=>{
+  if(window.scrollY > 400) backToTop.classList.add('show');
+  else backToTop.classList.remove('show');
+});
+
+function scrollToTop(){
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+</script>
 
 </div>
 

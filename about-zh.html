@@ -5,21 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>创站背景 | S9Trip</title>
-<meta name="description" content="关于泰伦斯，一名拥有二十多年经验的马来西亚导游，通过 S9Trip 分享真实世界的旅游经验。">
-<meta name="keywords" content="泰伦斯, 马来西亚导游, S9Trip, 旅游经验, 马来西亚领队" />
+<meta name="description" content="关于Terence|泰伦斯，一名拥有二十多年经验的马来西亚导游，通过 S9Trip 分享真实世界的旅游经验。">
+<meta name="keywords" content="Terence|泰伦斯, 马来西亚导游, S9Trip, 旅游经验, 马来西亚领队" />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="profile">
 <meta property="og:url" content="https://www.s9trip.com/about-zh.html">
-<meta property="og:title" content="关于泰伦斯 | 马来西亚导游 | S9Trip">
-<meta property="og:description" content="认识泰伦斯，一名拥有20多年经验的持牌马来西亚导游。了解 S9Trip 背后的故事。">
+<meta property="og:title" content="关于Terence|泰伦斯 | 马来西亚导游 | S9Trip">
+<meta property="og:description" content="认识Terence|泰伦斯，一名拥有20多年经验的持牌马来西亚导游。了解 S9Trip 背后的故事。">
 <meta property="og:image" content="https://www.s9trip.com/assets/images/terence-malaysia-registered-tourist-guide.jpg">
 
 <!-- Twitter -->
 <meta property="twitter:card" content="summary_large_image">
 <meta property="twitter:url" content="https://www.s9trip.com/about-zh.html">
-<meta property="twitter:title" content="关于泰伦斯 | 马来西亚导游 | S9Trip">
-<meta property="twitter:description" content="认识泰伦斯，一名拥有20多年经验的持牌马来西亚导游。了解 S9Trip 背后的故事。">
+<meta property="twitter:title" content="关于Terence|泰伦斯 | 马来西亚导游 | S9Trip">
+<meta property="twitter:description" content="认识Terence|泰伦斯，一名拥有20多年经验的持牌马来西亚导游。了解 S9Trip 背后的故事。">
 <meta property="twitter:image" content="https://www.s9trip.com/assets/images/terence-malaysia-registered-tourist-guide.jpg">
 
 <link rel="canonical" href="https://www.s9trip.com/about-zh.html">
@@ -40,16 +40,16 @@
 {
   "@context": "https://schema.org",
   "@type": "Person",
-  "name": "Terence Foong",
+  "name": "Terence|泰伦斯",
   "jobTitle": "马来西亚导游",
-  "description": "拥有二十多年经验的马来西亚导游，提供可信赖的旅游建议与线上支持。",
+  "description": "拥有二十多年经验的马来西亚导游，提供可信赖的旅游建议与在线咨询。",
   "url": "https://www.s9trip.com/about-zh.html",
   "knowsAbout": [
     "马来西亚旅游",
     "导游服务",
     "跨境交通",
     "旅游咨询",
-    "线上旅游支持"
+    "在线旅游咨询"
   ]
 }
 </script>
@@ -121,6 +121,53 @@ footer{
   margin:3rem 0 1rem;
 }
 footer span{color:var(--gold);font-weight:600}
+
+/* WhatsApp CTA */
+.whatsapp {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #25D366;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 10px 25px rgba(37,211,102,0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+}
+.whatsapp:hover { transform: scale(1.05); }
+.whatsapp span { font-size: 0.9rem; }
+
+/* Back to Top */
+.back-to-top {
+  position: fixed;
+  bottom: 90px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 999;
+}
+.back-to-top.show {
+  opacity: 1;
+  visibility: visible;
+}
 </style>
 </head>
 
@@ -162,7 +209,7 @@ footer span{color:var(--gold);font-weight:600}
 </p>
 
 <p class="signature">
-泰伦斯<br>
+Terence|泰伦斯<br>
 <span>自由内容创作者</span>
 
 </p>
@@ -171,6 +218,26 @@ footer span{color:var(--gold);font-weight:600}
 <footer>
 由 <span>S9Trip.com</span> 打造 · 建立在真实经验之上
 </footer>
+
+<button class="back-to-top" onclick="scrollToTop()" aria-label="回到顶部">↑</button>
+
+<a class="whatsapp"
+   href="https://wa.me/60123632338?text=你好%20Terence，我想咨询马来西亚旅游。">
+  WhatsApp <span>咨询</span>
+</a>
+
+<script>
+const backToTop = document.querySelector('.back-to-top');
+
+window.addEventListener('scroll', ()=>{
+  if(window.scrollY > 400) backToTop.classList.add('show');
+  else backToTop.classList.remove('show');
+});
+
+function scrollToTop(){
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+</script>
 
 </div>
 </body>

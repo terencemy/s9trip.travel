@@ -176,6 +176,32 @@
       font-weight:600;
       margin-left:4px;
     }
+
+    /* Back to Top */
+    .back-to-top {
+      position: fixed;
+      bottom: 90px;
+      right: 18px;
+      width: 44px;
+      height: 44px;
+      background: var(--navy);
+      color: #fff;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 999;
+    }
+    .back-to-top.show {
+      opacity: 1;
+      visibility: visible;
+    }
   </style>
 </head>
 
@@ -274,7 +300,7 @@
     <li>额外页面：<strong>$120 / 页</strong></li>
     <li>双语结构（EN / 中文）：<strong>$350 起</strong></li>
     <li>内容排版与整理：<strong>$150 起</strong></li>
-    <li>更新与技术支持：<strong>$90 / 页</strong></li>
+    <li>更新与技术咨询：<strong>$90 / 页</strong></li>
   </ul>
 </section>
 
@@ -332,10 +358,25 @@
   </p>
 </footer>
 
+<button class="back-to-top" onclick="scrollToTop()" aria-label="回到顶部">↑</button>
+
 <a class="whatsapp"
    href="https://wa.me/60123632338?text=你好%20Terence，我想咨询网站搭建服务。">
   WhatsApp <span>咨询</span>
 </a>
+
+<script>
+const backToTop = document.querySelector('.back-to-top');
+
+window.addEventListener('scroll', ()=>{
+  if(window.scrollY > 400) backToTop.classList.add('show');
+  else backToTop.classList.remove('show');
+});
+
+function scrollToTop(){
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+</script>
 
 </body>
 </html>

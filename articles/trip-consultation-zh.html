@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>旅行咨询服务｜S9Trip</title>
 
-  <meta name="description" content="S9Trip 提供仅限建议的旅行咨询服务，包括行程规划、本地资讯与 WhatsApp 支持。不代订、不带团。">
+  <meta name="description" content="S9Trip 提供仅限建议的旅行咨询服务，包括行程规划、本地资讯与 WhatsApp 咨询。不代订、不带团。">
   <link rel="canonical" href="https://www.s9trip.com/articles/trip-consultation-zh.html">
   <link rel="alternate" hreflang="zh-Hans" href="https://www.s9trip.com/articles/trip-consultation-zh.html">
   <link rel="alternate" hreflang="en" href="https://www.s9trip.com/articles/trip-consultation.html">
@@ -156,6 +156,53 @@
       color: var(--gold);
       font-weight: 600;
     }
+
+    /* WhatsApp CTA */
+    .whatsapp {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #25D366;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(37,211,102,0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 1000;
+      transition: transform 0.3s ease;
+    }
+    .whatsapp:hover { transform: scale(1.05); }
+    .whatsapp span { font-size: 0.9rem; }
+
+    /* Back to Top */
+    .back-to-top {
+      position: fixed;
+      bottom: 90px;
+      right: 24px;
+      width: 44px;
+      height: 44px;
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 999;
+    }
+    .back-to-top.show {
+      opacity: 1;
+      visibility: visible;
+    }
   </style>
 </head>
 
@@ -199,7 +246,7 @@
       <li>省钱建议与避开旅游陷阱</li>
     </ul>
 
-    <h3>✔ WhatsApp 问答支持</h3>
+    <h3>✔ WhatsApp 问答咨询</h3>
     <ul>
       <li>旅途中即时解答</li>
       <li>提供官方连结供旅客自行预订</li>
@@ -227,6 +274,26 @@
   <footer>
     Curated by <span>S9Trip.com</span> · 仅提供建议的旅行咨询服务
   </footer>
+
+  <button class="back-to-top" onclick="scrollToTop()" aria-label="回到顶部">↑</button>
+
+  <a class="whatsapp"
+     href="https://wa.me/60123632338?text=你好%20Terence，我想咨询马来西亚旅游。">
+    WhatsApp <span>咨询</span>
+  </a>
+
+  <script>
+  const backToTop = document.querySelector('.back-to-top');
+
+  window.addEventListener('scroll', ()=>{
+    if(window.scrollY > 400) backToTop.classList.add('show');
+    else backToTop.classList.remove('show');
+  });
+
+  function scrollToTop(){
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+  </script>
 
 </div>
 
