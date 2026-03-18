@@ -1,5 +1,19 @@
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import { GoogleGenAI, ThinkingLevel } from "@google/genai";
+
+console.log('Planner script loaded. Lang:', document.documentElement.lang);
+console.log('GoogleGenAI import type:', typeof GoogleGenAI);
+console.log('ThinkingLevel import type:', typeof ThinkingLevel);
+
+const isChinese = document.documentElement.lang === 'zh-Hans';
+
+// Visible debug overlay for the user to confirm script is running
+const debugOverlay = document.createElement('div');
+debugOverlay.id = 'planner-debug-overlay';
+debugOverlay.style.cssText = 'position:fixed;bottom:10px;right:10px;background:rgba(0,0,0,0.7);color:white;padding:5px 10px;border-radius:5px;font-size:12px;z-index:10000;pointer-events:none;';
+debugOverlay.textContent = 'Planner Script: Loaded';
+document.body.appendChild(debugOverlay);
 
 const generateBtn = document.getElementById('generate-btn') as HTMLButtonElement;
 const downloadPdfBtn = document.getElementById('download-pdf-btn') as HTMLButtonElement;
@@ -10,27 +24,99 @@ const styleSelect = document.getElementById('style') as HTMLSelectElement;
 const loadingSpinner = document.getElementById('planner-loading');
 const itineraryOutput = document.getElementById('itinerary-output');
 
+if (generateBtn) {
+  debugOverlay.textContent += ' | Button: OK';
+} else {
+  debugOverlay.textContent += ' | Button: MISSING';
+  debugOverlay.style.background = 'rgba(255,0,0,0.7)';
+}
+
+function showUIError(msg: string) {
+  debugOverlay.textContent = 'Error: ' + msg;
+  debugOverlay.style.background = 'rgba(255,0,0,0.7)';
+  if (itineraryOutput) {
+    itineraryOutput.textContent = msg;
+    itineraryOutput.style.display = 'block';
+    itineraryOutput.style.color = 'red';
+  } else {
+    console.error('UI Error:', msg);
+  }
+}
+
+console.log('Elements found:', {
+  generateBtn: !!generateBtn,
+  downloadPdfBtn: !!downloadPdfBtn,
+  plannerActions: !!plannerActions,
+  destinationInput: !!destinationInput,
+  daysInput: !!daysInput,
+  styleSelect: !!styleSelect,
+  loadingSpinner: !!loadingSpinner,
+  itineraryOutput: !!itineraryOutput
+});
+
+if (!generateBtn) {
+  showUIError(isChinese ? '找不到生成按钮。' : 'Generate button not found.');
+}
+
 let currentItinerary = "";
 
 generateBtn?.addEventListener('click', async () => {
+  console.log('Generate button clicked');
+  
+  if (!destinationInput || !daysInput || !styleSelect) {
+    showUIError(isChinese ? '表单元素缺失。' : 'Form elements missing.');
+    return;
+  }
+
   const destination = destinationInput.value.trim();
   const days = daysInput.value;
   const style = styleSelect.value;
 
+  console.log('Inputs:', { destination, days, style, isChinese });
+
   if (!destination) {
-    const isChinese = document.documentElement.lang === 'zh-Hans';
     alert(isChinese ? '请输入目的地。' : 'Please enter a destination.');
     return;
   }
 
-  loadingSpinner!.style.display = 'block';
-  itineraryOutput!.style.display = 'none';
-  plannerActions!.style.display = 'none';
-  itineraryOutput!.textContent = '';
+  if (loadingSpinner) loadingSpinner.style.display = 'block';
+  if (itineraryOutput) {
+    itineraryOutput.style.display = 'none';
+    itineraryOutput.textContent = '';
+    itineraryOutput.style.color = 'inherit';
+  }
+  if (plannerActions) plannerActions.style.display = 'none';
+  debugOverlay.textContent = 'Planner Script: Generating...';
+  debugOverlay.style.background = 'rgba(0,120,255,0.7)';
 
   try {
-    const isChinese = document.documentElement.lang === 'zh-Hans';
+    let apiKey = '';
+    try {
+      // @ts-ignore
+      apiKey = (typeof process !== 'undefined' && process.env?.GEMINI_API_KEY) || (import.meta as any).env?.VITE_GEMINI_API_KEY;
+    } catch (e) {
+      console.warn('Error accessing process.env or import.meta.env:', e);
+      // @ts-ignore
+      apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || '';
+    }
+
+    console.log('Frontend API Key present:', !!apiKey);
+    if (apiKey && typeof apiKey === 'string') {
+      console.log('Frontend API Key prefix:', apiKey.substring(0, 4));
+    }
     
+    if (!apiKey || apiKey === 'undefined' || apiKey === 'null' || apiKey === '') {
+      throw new Error(isChinese ? 'API 密钥缺失，请检查环境设置。' : 'API Key is missing. Please check your environment settings.');
+    }
+
+    console.log('Initializing GoogleGenAI...');
+    if (typeof GoogleGenAI !== 'function') {
+      throw new Error('GoogleGenAI is not a constructor. Type: ' + typeof GoogleGenAI);
+    }
+    const ai = new GoogleGenAI({ apiKey });
+    console.log('GoogleGenAI initialized');
+    debugOverlay.textContent = 'Planner Script: Initialized | AI: OK';
+
     const styleMap: Record<string, string> = isChinese ? {
       relax: '休闲',
       food: '美食',
@@ -44,120 +130,106 @@ generateBtn?.addEventListener('click', async () => {
     };
     const styleLabel = styleMap[style] || style;
 
-    const prompt = isChinese 
-      ? `您是一位聪明的马来西亚旅游规划师。
-请根据以下输入创建个性化的旅游行程：
-- 目的地：${destination}
-- 天数：${days}
-- 旅行风格：${styleLabel}
+    const systemInstruction = isChinese 
+      ? `您是一位聪明的马来西亚旅游规划师。请根据用户输入创建个性化的旅游行程。不要使用星号 (*) 或井号 (#) 等 markdown 字符。仅使用纯文本。`
+      : `You are a smart Malaysia travel planner. Create a personalized travel itinerary based on user input. Do NOT use markdown characters like asterisks (*) or hashtags (#). Use plain text only.`;
 
-说明：
-1. 使用简单的句子生成一个简单、现实的逐日行程。
-2. 重要提示：输出中不要使用星号 (*) 或井号 (#) 等 markdown 字符。仅使用纯文本。
-3. 包括：
-   - 早、午、晚计划
-   - 热门景点 + 每天 1 个隐藏宝藏
-   - 美食推荐
-4. 保持旅行路线高效（附近的地点放在一起）。
-5. 避免行程过于拥挤。
-6. 除非另有说明，否则默认为中等预算。
-7. 使其对马来西亚的旅行者实用（天气、交通、时间安排）。
-8. 请使用中文回答。
+    const userPrompt = isChinese 
+      ? `目的地：${destination}，天数：${days}，旅行风格：${styleLabel}。请生成行程。`
+      : `Destination: ${destination}, Days: ${days}, Style: ${styleLabel}. Please generate the itinerary.`;
 
-输出格式（纯文本，无 * 或 #）：
+    const modelName = "gemini-3-flash-preview";
+    console.log('Generating itinerary with model:', modelName);
+    
+    let response;
+    
+    const callWithTimeout = async (model: string, prompt: string, instruction: string, timeoutMs: number, thinking: boolean = false) => {
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error(`AI Request Timeout (${timeoutMs/1000}s)`)), timeoutMs)
+      );
+      
+      const config: any = {
+        systemInstruction: instruction,
+        maxOutputTokens: 2048
+      };
+      
+      if (thinking) {
+        config.thinkingConfig = { thinkingLevel: ThinkingLevel.LOW };
+      }
+      
+      const aiCall = ai.models.generateContent({
+        model: model,
+        contents: prompt,
+        config: config
+      });
+      
+      return await Promise.race([aiCall, timeoutPromise]) as any;
+    };
 
-行程摘要：
-目的地：[目的地名称]
-持续时间：[天数]
-旅行风格：[风格]
-
-第 1 天：
-早上：[活动]
-下午：[活动]
-晚上：[活动]
-美食：[推荐]
-
-第 2 天：
-...
-
-温馨提示：
-- 最佳出门时间
-- 交通建议
-- 简单的本地建议
-
-保持简洁、有用，并且在没有任何特殊符号的情况下非常易于阅读。`
-      : `You are a smart Malaysia travel planner.
-Create a personalized travel itinerary based on the following input:
-- Destination: ${destination}
-- Number of days: ${days}
-- Travel style: ${styleLabel}
-
-Instructions:
-1. Generate a simple, realistic day-by-day itinerary using simple sentences.
-2. IMPORTANT: Do NOT use markdown characters like asterisks (*) or hashtags (#) in the output. Use plain text only.
-3. Include:
-   - Morning, afternoon, evening plan
-   - Popular attractions + 1 hidden gem per day
-   - Food recommendations
-4. Keep travel routes efficient (nearby places together).
-5. Avoid overpacking the schedule.
-6. Default to mid-range budget unless stated otherwise.
-7. Make it practical for travelers in Malaysia (weather, traffic, timing).
-
-Output format (Plain Text, No * or #):
-
-Trip Summary:
-Destination: [Destination Name]
-Duration: [Number of Days]
-Travel Style: [Style]
-
-Day 1:
-Morning: [Activity]
-Afternoon: [Activity]
-Evening: [Activity]
-Food: [Recommendation]
-
-Day 2:
-...
-
-Quick Tips:
-- Best time to go out
-- Transport suggestion
-- Simple local advice
-
-Keep it concise, useful, and very easy to read without any special symbols.`;
-
-    const response = await fetch('/api/generate-itinerary', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Failed to generate itinerary');
+    try {
+      console.log('Attempting with gemini-3-flash-preview...');
+      debugOverlay.textContent = 'Planner Script: Calling Gemini 3 (30s)...';
+      response = await callWithTimeout("gemini-3-flash-preview", userPrompt, systemInstruction, 30000, true);
+    } catch (e1: any) {
+      console.warn('gemini-3-flash-preview failed:', e1);
+      debugOverlay.textContent = 'G3 Error: ' + (e1.message || 'Failed');
+      debugOverlay.style.background = 'rgba(255,165,0,0.7)';
+      
+      try {
+        console.log('Attempting with gemini-flash-latest...');
+        debugOverlay.textContent = 'Planner Script: Calling Flash Latest (20s)...';
+        response = await callWithTimeout("gemini-flash-latest", userPrompt, systemInstruction, 20000);
+      } catch (e2: any) {
+        console.warn('gemini-flash-latest failed:', e2);
+        debugOverlay.textContent = 'Flash Error: ' + (e2.message || 'Failed');
+        
+        try {
+          console.log('Attempting with gemini-3.1-flash-lite-preview...');
+          debugOverlay.textContent = 'Planner Script: Calling Flash Lite (15s)...';
+          response = await callWithTimeout("gemini-3.1-flash-lite-preview", userPrompt, systemInstruction, 15000);
+        } catch (e3: any) {
+          console.warn('gemini-3.1-flash-lite-preview failed:', e3);
+          debugOverlay.textContent = 'Lite Error: ' + (e3.message || 'Failed');
+          throw e3; // Re-throw to be caught by outer catch
+        }
+      }
     }
 
-    const data = await response.json();
-    currentItinerary = data.text || "Sorry, I couldn't generate an itinerary. Please try again.";
+    console.log('AI Response received:', !!response);
+    if (!response) {
+      throw new Error(isChinese ? '未收到 AI 响应。' : 'No AI response received.');
+    }
+    const text = response.text;
+    console.log('AI Response text length:', text?.length || 0);
+    debugOverlay.textContent = 'Planner Script: Success';
+    debugOverlay.style.background = 'rgba(0,200,0,0.7)';
     
     if (itineraryOutput) {
-      itineraryOutput.textContent = currentItinerary;
       itineraryOutput.style.display = 'block';
-    }
-    if (plannerActions) {
-      plannerActions.style.display = 'flex';
+      if (text) {
+        itineraryOutput.textContent = text;
+        currentItinerary = text;
+        if (plannerActions) plannerActions.style.display = 'flex';
+        debugOverlay.textContent = 'Planner Script: Success';
+        debugOverlay.style.background = 'rgba(0,255,0,0.7)';
+      } else {
+        itineraryOutput.textContent = isChinese ? '抱歉，无法生成行程。请再试一次。' : "Sorry, I couldn't generate an itinerary. Please try again.";
+        debugOverlay.textContent = 'Planner Script: Empty Response';
+      }
     }
   } catch (error: any) {
     console.error('AI Error:', error);
-    if (itineraryOutput) {
-      itineraryOutput.textContent = isChinese 
-        ? '生成行程时出错，请稍后再试。' 
-        : 'An error occurred while generating your itinerary. Please try again later.';
-      itineraryOutput.style.display = 'block';
+    
+    let errorMsg = error.message || 'Unknown error';
+    if (errorMsg.includes('API_KEY_INVALID')) {
+      errorMsg = isChinese ? 'API 密钥无效。' : 'Invalid API Key.';
+    } else if (errorMsg.includes('QUOTA_EXCEEDED')) {
+      errorMsg = isChinese ? '配额已耗尽，请稍后再试。' : 'Quota exceeded. Please try again later.';
     }
+
+    showUIError((isChinese ? '生成行程时出错：' : 'An error occurred: ') + errorMsg);
   } finally {
-    loadingSpinner!.style.display = 'none';
+    if (loadingSpinner) loadingSpinner.style.display = 'none';
   }
 });
 

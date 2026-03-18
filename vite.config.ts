@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -30,14 +30,24 @@ function getHtmlEntries() {
   return entries;
 }
 
-export default defineConfig({
-  build: {
-    rollupOptions: {
-      input: getHtmlEntries(),
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  const apiKey = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+  console.log('Vite build: GEMINI_API_KEY present:', !!apiKey);
+  
+  return {
+    define: {
+      'process.env.GEMINI_API_KEY': JSON.stringify(apiKey),
+      'import.meta.env.VITE_GEMINI_API_KEY': JSON.stringify(apiKey),
     },
-  },
-  server: {
-    port: 3000,
-    host: '0.0.0.0',
-  },
+    build: {
+      rollupOptions: {
+        input: getHtmlEntries(),
+      },
+    },
+    server: {
+      port: 3000,
+      host: '0.0.0.0',
+    },
+  };
 });
