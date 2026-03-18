@@ -1,5 +1,5 @@
 {
   "name": "S9Trip",
-  "description": "Malaysia Tourist Guide and Digital Nomad travel support and website setup services.",
+  "description": "Malaysia Tourist Guide and Digital Nomad travel support. Fixed Tawk.to console errors and production build issues.",
   "requestFramePermissions": []
 }
