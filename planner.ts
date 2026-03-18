@@ -1,4 +1,3 @@
-import { GoogleGenAI } from "@google/genai";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 
@@ -31,7 +30,6 @@ generateBtn?.addEventListener('click', async () => {
 
   try {
     const isChinese = document.documentElement.lang === 'zh-Hans';
-    const ai = new GoogleGenAI({ apiKey: (process.env as any).GEMINI_API_KEY });
     
     const styleMap: Record<string, string> = isChinese ? {
       relax: '休闲',
@@ -129,19 +127,35 @@ Quick Tips:
 
 Keep it concise, useful, and very easy to read without any special symbols.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: prompt,
+    const response = await fetch('/api/generate-itinerary', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt }),
     });
 
-    currentItinerary = response.text || "Sorry, I couldn't generate an itinerary. Please try again.";
-    itineraryOutput!.textContent = currentItinerary;
-    itineraryOutput!.style.display = 'block';
-    plannerActions!.style.display = 'block';
-  } catch (error) {
-    console.error('Error generating itinerary:', error);
-    itineraryOutput!.textContent = 'An error occurred while generating your itinerary. Please check your connection and try again.';
-    itineraryOutput!.style.display = 'block';
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to generate itinerary');
+    }
+
+    const data = await response.json();
+    currentItinerary = data.text || "Sorry, I couldn't generate an itinerary. Please try again.";
+    
+    if (itineraryOutput) {
+      itineraryOutput.textContent = currentItinerary;
+      itineraryOutput.style.display = 'block';
+    }
+    if (plannerActions) {
+      plannerActions.style.display = 'flex';
+    }
+  } catch (error: any) {
+    console.error('AI Error:', error);
+    if (itineraryOutput) {
+      itineraryOutput.textContent = isChinese 
+        ? '生成行程时出错，请稍后再试。' 
+        : 'An error occurred while generating your itinerary. Please try again later.';
+      itineraryOutput.style.display = 'block';
+    }
   } finally {
     loadingSpinner!.style.display = 'none';
   }
