@@ -2,8 +2,8 @@ import { GoogleGenAI } from "@google/genai";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 
-const generateBtn = document.getElementById('generate-btn');
-const downloadPdfBtn = document.getElementById('download-pdf-btn');
+const generateBtn = document.getElementById('generate-btn') as HTMLButtonElement;
+const downloadPdfBtn = document.getElementById('download-pdf-btn') as HTMLButtonElement;
 const plannerActions = document.getElementById('planner-actions');
 const destinationInput = document.getElementById('destination') as HTMLInputElement;
 const daysInput = document.getElementById('days') as HTMLInputElement;
@@ -158,7 +158,7 @@ downloadPdfBtn?.addEventListener('click', async () => {
 
   try {
     // We use html2canvas to capture the itinerary as an image to support Chinese characters in PDF
-    const canvas = await html2canvas(itineraryOutput, {
+    const canvas = await (html2canvas as any)(itineraryOutput, {
       scale: 2, // Higher scale for better quality
       useCORS: true,
       logging: false,
