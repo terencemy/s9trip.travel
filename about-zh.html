@@ -239,6 +239,15 @@ function scrollToTop(){
 }
 </script>
 <script>
+// Suppress Tawk.to internal errors that clutter the console
+window.addEventListener('error', function(event) {
+  if (event.message && (event.message.includes('Tawk') || event.message.includes('getForm') || event.message.includes('Socket server'))) {
+    event.preventDefault();
+    console.warn('Suppressed third-party widget error:', event.message);
+  }
+}, true);
+
+// Robust Tawk.to loading
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
 (function(){
   var s1=document.createElement("script"),
