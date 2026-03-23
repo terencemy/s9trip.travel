@@ -23,10 +23,12 @@
 </script>
 <style>
 :root{
-  --navy:#002B5C;
-  --gold:#C9A24D;
-  --bg:#F6F7F9;
-  --text:#1F2933;
+  --navy:#0a1d37;
+  --navy-deep:#08162b;
+  --gold:#c6a24b;
+  --gold-soft:#e6d6a3;
+  --bg:#f7f8fa;
+  --text:#1f2937;
 }
 body{
   margin:0;
@@ -41,7 +43,7 @@ body{
   padding:20px;
 }
 header{
-  background:var(--navy);
+  background:linear-gradient(135deg,var(--navy-deep),var(--navy));
   color:#ffffff;
   padding:28px;
   border-radius:14px;
@@ -72,6 +74,30 @@ header::after{
 }
 .lang-switch .active{
   color:var(--gold);
+}
+/* WhatsApp CTA */
+.whatsapp {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  background: var(--navy);
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+  z-index: 1000;
+}
+.whatsapp span {
+  color: var(--gold);
+  font-weight: 500;
+}
+.site-logo {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 0.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 .lang-switch a:hover{
   text-decoration:underline;
@@ -112,8 +138,14 @@ footer{
   <!-- Language Option -->
   <div class="lang-switch">
     <span class="active">English</span> |
-    <a href="klia-klia2-free-shuttle-bus-guide-zh.html">中文</a>
+    <a href="/articles/klia-klia2-free-shuttle-bus-guide-zh.html">中文</a>
   </div>
+
+  <a href="/">
+    <img src="/assets/images/s9trip-malaysia-travel-support-logo.png"
+         alt="S9Trip Malaysia travel support logo"
+         class="site-logo">
+  </a>
 
   <h1>KLIA to KLIA2 Airport Free Shuttle Bus Guide</h1>
   <p>Official free shuttle service between Terminal 1 and Terminal 2 at Kuala Lumpur International Airport.</p>
@@ -165,8 +197,14 @@ Exit 3 → Bay A10
 </section>
 
 <footer>
-Curated by <strong style="color:#C9A24D;">S9Trip.com</strong> · Travel smarter, travel seamlessly
+  <a href="/" style="color:var(--gold);text-decoration:none;font-weight:600;">Back to Home</a><br>
+  Curated by <strong style="color:#C9A24D;">S9Trip.com</strong> · Travel smarter, travel seamlessly
 </footer>
+
+<a class="whatsapp"
+   href="https://wa.me/60123632338?text=Hi%20Terence,%20I%20would%20like%20to%20enquire%20about%20Malaysia%20travel%20support.">
+  WhatsApp <span>Support</span>
+</a>
 <script>
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
 (function(){

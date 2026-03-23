@@ -26,25 +26,26 @@
   <!-- Malaysia Airlines Navy & Gold Style -->
   <style>
     :root {
-      --navy:#0b1f3a;
-      --gold:#c9a14a;
-      --light-gold:#e6d19c;
-      --text-dark:#1a1a1a;
+      --navy:#0a1d37;
+      --navy-deep:#08162b;
+      --gold:#c6a24b;
+      --gold-soft:#e6d6a3;
+      --bg:#f7f8fa;
+      --text:#1f2937;
       --text-muted:#555;
-      --bg-light:#f8f9fb;
     }
 
     body{
       margin:0;
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",
       "PingFang SC","Microsoft YaHei",Roboto,Arial,sans-serif;
-      color:var(--text-dark);
-      background:#fff;
+      color:var(--text);
+      background:var(--bg);
       line-height:1.8;
     }
 
     header{
-      background:linear-gradient(135deg,var(--navy),#06162b);
+      background:linear-gradient(135deg,var(--navy-deep),var(--navy));
       color:#fff;
       padding:4rem 1.5rem;
       text-align:center;
@@ -69,6 +70,12 @@
       font-weight:600;
       cursor:default;
     }
+    .site-logo {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 0.5rem;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
 
     header h1{
       margin:0 0 .5rem;
@@ -78,7 +85,7 @@
     header p{
       margin:0;
       font-size:1.1rem;
-      color:var(--light-gold);
+      color:var(--gold-soft);
     }
 
     main{
@@ -115,7 +122,7 @@
     ul li{ margin-bottom:.5rem; }
 
     article{
-      background:var(--bg-light);
+      background:#ffffff;
       border:1px solid #e2e5ec;
       border-radius:10px;
       padding:2rem;
@@ -163,18 +170,16 @@
       bottom:18px;
       background:var(--navy);
       color:#fff;
-      padding:14px 22px;
+      padding:14px 20px;
       border-radius:999px;
       font-size:.9rem;
       text-decoration:none;
-      box-shadow:0 14px 30px rgba(11,31,58,.35);
-      border:1px solid var(--gold);
+      box-shadow:0 12px 28px rgba(0,0,0,.25);
       z-index:9999;
     }
     .whatsapp span{
       color:var(--gold);
-      font-weight:600;
-      margin-left:4px;
+      font-weight:500;
     }
 
     /* Back to Top */
@@ -210,8 +215,14 @@
 <header>
   <div class="lang-switch">
     <span class="active">中文</span> |
-    <a href="website-setup-pricing.html">EN</a>
+    <a href="/articles/website-setup-pricing.html">EN</a>
   </div>
+
+  <a href="/zh.html">
+    <img src="/assets/images/s9trip-malaysia-travel-support-logo.png"
+         alt="S9Trip 马来西亚旅游咨询标志"
+         class="site-logo">
+  </a>
 
   <h1>专业网站搭建服务</h1>
   <p>适合官网、服务页、百度搜索</p>
@@ -352,6 +363,7 @@
 </main>
 
 <footer>
+  <a href="/zh.html" style="color:var(--gold);text-decoration:none;font-weight:600;">回到首页</a><br>
   <p>
     &copy; 2026 S9Trip · 企业与个人专业网站搭建服务<br>
     快速 · SEO 友好 · 百度搜索 · 完全拥有
