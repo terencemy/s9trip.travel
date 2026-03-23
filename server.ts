@@ -21,6 +21,18 @@ async function startServer() {
     res.json({ status: 'ok' });
   });
 
+  app.get('/api/admin/test-ai', (req, res) => {
+    res.json({
+      status: 'success',
+      message: 'AI API is live and responding!',
+      timestamp: new Date().toISOString(),
+      env: {
+        hasApiKey: !!process.env.GEMINI_API_KEY,
+        nodeEnv: process.env.NODE_ENV
+      }
+    });
+  });
+
   app.get('/api/debug/env', (req, res) => {
     res.json({
       hasApiKey: !!process.env.GEMINI_API_KEY,
