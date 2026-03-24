@@ -32,8 +32,8 @@ function getHtmlEntries() {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const apiKey = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
-  console.log('Vite build: GEMINI_API_KEY present:', !!apiKey);
+  const apiKey = env.MY_API_KEY || env.GEMINI_API_KEY || process.env.MY_API_KEY || process.env.GEMINI_API_KEY;
+  console.log('Vite build: API Key present:', !!apiKey);
   
   return {
     define: {

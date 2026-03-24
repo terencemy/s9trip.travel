@@ -22,12 +22,13 @@ async function startServer() {
   });
 
   app.get('/api/admin/test-ai', (req, res) => {
+    const apiKey = process.env.MY_API_KEY || process.env.GEMINI_API_KEY;
     res.json({
       status: 'success',
       message: 'AI API is live and responding!',
       timestamp: new Date().toISOString(),
       env: {
-        hasApiKey: !!process.env.GEMINI_API_KEY,
+        hasApiKey: !!apiKey,
         nodeEnv: process.env.NODE_ENV
       }
     });
@@ -67,9 +68,21 @@ async function startServer() {
         }
       });
     } else {
-      console.error('Dist directory not found! Please run npm run build.');
+      const currentDir = process.cwd();
+      console.error(`Dist directory not found at ${distPath}! Current working directory: ${currentDir}`);
       app.get('*', (req, res) => {
-        res.status(500).send('Application not built. Please run npm run build.');
+        res.status(500).send(`
+          <h1>Application not built</h1>
+          <p>The server is running in production mode, but the <code>dist</code> folder is missing.</p>
+          <p><strong>Path checked:</strong> <code>${distPath}</code></p>
+          <p><strong>Working directory:</strong> <code>${currentDir}</code></p>
+          <hr>
+          <h3>How to fix:</h3>
+          <ol>
+            <li>In AI Studio, click the <strong>"Deploy"</strong> button. This will run <code>npm run build</code> and push the files to the live site.</li>
+            <li>If you are deploying manually, ensure <code>npm run build</code> is part of your build pipeline.</li>
+          </ol>
+        `);
       });
     }
   }
