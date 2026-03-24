@@ -43,8 +43,19 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_MY_API_KEY': JSON.stringify(apiKey),
     },
     build: {
+      chunkSizeWarningLimit: 1000,
       rollupOptions: {
         input: getHtmlEntries(),
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('jspdf') || id.includes('html2canvas')) {
+                return 'pdf-vendor';
+              }
+              return 'vendor';
+            }
+          }
+        }
       },
     },
     server: {

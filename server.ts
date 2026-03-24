@@ -22,7 +22,7 @@ async function startServer() {
 
   // API routes FIRST
   app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok' });
+    res.status(200).send('OK');
   });
 
   app.get('/api/admin/test-ai', (req, res) => {
