@@ -14,7 +14,11 @@ async function startServer() {
 
   app.use(express.json());
 
-  console.log('GEMINI_API_KEY is present in environment:', !!process.env.GEMINI_API_KEY);
+  console.log('API Key Status:', {
+    MY_API_KEY: !!process.env.MY_API_KEY,
+    GEMINI_API_KEY: !!process.env.GEMINI_API_KEY,
+    AnyKey: !!(process.env.MY_API_KEY || process.env.GEMINI_API_KEY)
+  });
 
   // API routes FIRST
   app.get('/api/health', (req, res) => {

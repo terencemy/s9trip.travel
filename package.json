@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "tsx server.ts",
     "start": "tsx server.ts",
-    "build": "vite build",
+    "build": "vite build && ls -R dist",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
