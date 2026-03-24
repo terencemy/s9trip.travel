@@ -93,11 +93,13 @@ generateBtn?.addEventListener('click', async () => {
     let apiKey = '';
     try {
       // @ts-ignore
-      apiKey = (typeof process !== 'undefined' && process.env?.GEMINI_API_KEY) || (import.meta as any).env?.VITE_GEMINI_API_KEY;
+      apiKey = (typeof process !== 'undefined' && (process.env?.MY_API_KEY || process.env?.GEMINI_API_KEY)) || 
+               (import.meta as any).env?.VITE_MY_API_KEY || 
+               (import.meta as any).env?.VITE_GEMINI_API_KEY;
     } catch (e) {
       console.warn('Error accessing process.env or import.meta.env:', e);
       // @ts-ignore
-      apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || '';
+      apiKey = (import.meta as any).env?.VITE_MY_API_KEY || (import.meta as any).env?.VITE_GEMINI_API_KEY || '';
     }
 
     console.log('Frontend API Key present:', !!apiKey);

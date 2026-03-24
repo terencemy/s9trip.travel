@@ -38,7 +38,9 @@ export default defineConfig(({ mode }) => {
   return {
     define: {
       'process.env.GEMINI_API_KEY': JSON.stringify(apiKey),
+      'process.env.MY_API_KEY': JSON.stringify(apiKey),
       'import.meta.env.VITE_GEMINI_API_KEY': JSON.stringify(apiKey),
+      'import.meta.env.VITE_MY_API_KEY': JSON.stringify(apiKey),
     },
     build: {
       rollupOptions: {
