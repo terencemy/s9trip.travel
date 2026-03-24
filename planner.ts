@@ -245,56 +245,100 @@ downloadPdfBtn?.addEventListener('click', async () => {
   downloadPdfBtn.disabled = true;
 
   try {
-    // We use html2canvas to capture the itinerary as an image to support Chinese characters in PDF
-    const canvas = await (html2canvas as any)(itineraryOutput, {
-      scale: 2, // Higher scale for better quality
+    // Create a temporary container for the PDF content to ensure all Chinese characters are rendered correctly
+    const printContainer = document.createElement('div');
+    printContainer.style.position = 'absolute';
+    printContainer.style.left = '-9999px';
+    printContainer.style.top = '0';
+    printContainer.style.width = '800px'; // Fixed width for consistent rendering
+    printContainer.style.padding = '40px';
+    printContainer.style.background = '#ffffff';
+    printContainer.style.color = '#1f2937';
+    printContainer.style.fontFamily = '"Inter", "PingFang SC", "Microsoft YaHei", sans-serif';
+
+    const title = document.createElement('h1');
+    title.style.fontSize = '28px';
+    title.style.color = '#0a1d37';
+    title.style.marginBottom = '10px';
+    title.style.fontFamily = '"Playfair Display", serif';
+    title.textContent = isChinese ? "您的马来西亚旅游行程" : "Your Malaysia Travel Itinerary";
+    printContainer.appendChild(title);
+
+    const date = document.createElement('p');
+    date.style.fontSize = '14px';
+    date.style.color = '#6b7280';
+    date.style.marginBottom = '30px';
+    date.textContent = `${isChinese ? "生成日期" : "Generated on"}: ${new Date().toLocaleDateString()}`;
+    printContainer.appendChild(date);
+
+    const content = document.createElement('div');
+    content.style.whiteSpace = 'pre-wrap';
+    content.style.fontSize = '16px';
+    content.style.lineHeight = '1.8';
+    content.style.padding = '30px';
+    content.style.background = '#f7f8fa';
+    content.style.borderRadius = '8px';
+    content.style.borderLeft = '5px solid #c6a24b';
+    content.textContent = currentItinerary;
+    printContainer.appendChild(content);
+
+    const footer = document.createElement('div');
+    footer.style.marginTop = '40px';
+    footer.style.textAlign = 'center';
+    footer.style.borderTop = '1px solid #e5e7eb';
+    footer.style.paddingTop = '20px';
+    
+    const footerText1 = document.createElement('p');
+    footerText1.style.fontSize = '14px';
+    footerText1.style.color = '#c6a24b';
+    footerText1.style.fontStyle = 'italic';
+    footerText1.style.margin = '0';
+    footerText1.textContent = isChinese ? "S9Trip - 马来西亚导游与数字游民" : "S9Trip - Malaysia Tourist Guide & Digital Nomad";
+    footer.appendChild(footerText1);
+
+    const footerText2 = document.createElement('p');
+    footerText2.style.fontSize = '12px';
+    footerText2.style.color = '#9ca3af';
+    footerText2.style.margin = '5px 0 0 0';
+    footerText2.textContent = "www.s9trip.com | Real Experiences, Real People";
+    footer.appendChild(footerText2);
+
+    printContainer.appendChild(footer);
+    document.body.appendChild(printContainer);
+
+    // Capture the entire container
+    const canvas = await (html2canvas as any)(printContainer, {
+      scale: 2,
       useCORS: true,
       logging: false,
-      backgroundColor: '#f7f8fa' // Match var(--bg)
+      backgroundColor: '#ffffff'
     });
+
+    // Remove the temporary container
+    document.body.removeChild(printContainer);
 
     const imgData = canvas.toDataURL('image/png');
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
-    const margin = 15;
-    const contentWidth = pageWidth - (margin * 2);
-    const imgWidth = contentWidth;
+    
+    const imgWidth = pageWidth - 20; // 10mm margin on each side
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    // Header
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
-    doc.setTextColor(10, 29, 55); // Navy color
-    doc.text(isChinese ? "您的马来西亚旅游行程" : "Your Malaysia Travel Itinerary", margin, 20);
-    
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text(`${isChinese ? "生成日期" : "Generated on"}: ${new Date().toLocaleDateString()}`, margin, 28);
+    // Handle multi-page if necessary
+    let heightLeft = imgHeight;
+    let position = 10; // Start 10mm from top
 
-    // Add the captured image
-    let yPos = 35;
-    
-    // If the image is longer than one page, we might need to handle it.
-    // However, for most itineraries, it should fit or we can just put it on one page if it's not too long.
-    // A better way is to split the canvas if needed, but let's start with a simple approach.
-    if (yPos + imgHeight > pageHeight - 20) {
-      // If it's too long, we scale it down to fit one page for now, 
-      // or we could split it. Let's try to fit it first.
-      const scaleFactor = (pageHeight - yPos - 20) / imgHeight;
-      if (scaleFactor < 0.5) {
-        // If it's really long, we just put it and it might overflow.
-        // In a real app, we'd split the canvas into multiple images.
-        doc.addImage(imgData, 'PNG', margin, yPos, imgWidth, imgHeight);
-      } else {
-        doc.addImage(imgData, 'PNG', margin, yPos, imgWidth, imgHeight * scaleFactor);
-      }
-    } else {
-      doc.addImage(imgData, 'PNG', margin, yPos, imgWidth, imgHeight);
+    doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+    heightLeft -= (pageHeight - 20);
+
+    while (heightLeft >= 0) {
+      position = heightLeft - imgHeight + 10;
+      doc.addPage();
+      doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
     }
 
-    addFooter(doc, pageWidth, pageHeight, isChinese);
     doc.save(`S9Trip-Itinerary-${destinationInput.value || 'Malaysia'}.pdf`);
   } catch (error) {
     console.error('Error generating PDF:', error);
@@ -304,15 +348,3 @@ downloadPdfBtn?.addEventListener('click', async () => {
     downloadPdfBtn.disabled = false;
   }
 });
-
-function addFooter(doc: jsPDF, pageWidth: number, pageHeight: number, isChinese: boolean) {
-  const footerY = pageHeight - 15;
-  doc.setFont("helvetica", "italic");
-  doc.setFontSize(9);
-  doc.setTextColor(198, 162, 75); // Gold color from CSS
-  doc.text(isChinese ? "S9Trip - 马来西亚导游与数字游民" : "S9Trip - Malaysia Tourist Guide & Digital Nomad", pageWidth / 2, footerY, { align: "center" });
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
-  doc.setTextColor(156, 163, 175);
-  doc.text("www.s9trip.com | Real Experiences, Real People", pageWidth / 2, footerY + 5, { align: "center" });
-}
