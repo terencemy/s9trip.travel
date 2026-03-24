@@ -322,21 +322,43 @@ downloadPdfBtn?.addEventListener('click', async () => {
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
     
-    const imgWidth = pageWidth - 20; // 10mm margin on each side
+    const margin = 10;
+    const footerHeight = 20;
+    const effectivePageHeight = pageHeight - (margin * 2) - footerHeight;
+    
+    const imgWidth = pageWidth - (margin * 2);
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    // Handle multi-page if necessary
+    const addFooterBranding = (pdfDoc: jsPDF) => {
+      const footerY = pageHeight - 15;
+      pdfDoc.setFont("helvetica", "italic");
+      pdfDoc.setFontSize(9);
+      pdfDoc.setTextColor(198, 162, 75); // Gold
+      pdfDoc.text(isChinese ? "S9Trip - 马来西亚导游与数字游民" : "S9Trip - Malaysia Tourist Guide & Digital Nomad", pageWidth / 2, footerY, { align: "center" });
+      pdfDoc.setFont("helvetica", "normal");
+      pdfDoc.setFontSize(8);
+      pdfDoc.setTextColor(156, 163, 175);
+      pdfDoc.text("www.s9trip.com | Real Experiences, Real People", pageWidth / 2, footerY + 5, { align: "center" });
+    };
+
+    // Handle multi-page
     let heightLeft = imgHeight;
-    let position = 10; // Start 10mm from top
+    let position = margin;
+    let page = 1;
 
-    doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-    heightLeft -= (pageHeight - 20);
+    // First page
+    doc.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+    addFooterBranding(doc);
+    heightLeft -= effectivePageHeight;
 
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight + 10;
+    // Subsequent pages
+    while (heightLeft > 0) {
       doc.addPage();
-      doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+      position = margin - (effectivePageHeight * page);
+      doc.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+      addFooterBranding(doc);
+      heightLeft -= effectivePageHeight;
+      page++;
     }
 
     doc.save(`S9Trip-Itinerary-${destinationInput.value || 'Malaysia'}.pdf`);
