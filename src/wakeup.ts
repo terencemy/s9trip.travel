@@ -66,8 +66,8 @@ async function wakeUpServer() {
       if (response.ok) {
         console.log('Server is awake!');
         if (overlay) {
-          overlay.style.opacity = '0';
-          setTimeout(() => overlay?.remove(), 500);
+          (overlay as HTMLElement).style.opacity = '0';
+          setTimeout(() => (overlay as HTMLElement)?.remove(), 500);
         }
         return; 
       }
@@ -92,8 +92,8 @@ async function wakeUpServer() {
 
   // If we get here, it failed after all retries, but we should still hide the overlay
   if (overlay) {
-    overlay.style.opacity = '0';
-    setTimeout(() => overlay?.remove(), 500);
+    (overlay as HTMLElement).style.opacity = '0';
+    setTimeout(() => (overlay as HTMLElement)?.remove(), 500);
   }
 }
 

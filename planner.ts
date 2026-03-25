@@ -1,6 +1,8 @@
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { GoogleGenAI, ThinkingLevel } from "@google/genai";
+import { db } from "./src/firebase";
+import { collection, addDoc, getDoc, doc, serverTimestamp } from "firebase/firestore";
 
 console.log('Planner script loaded. Lang:', document.documentElement.lang);
 console.log('GoogleGenAI import type:', typeof GoogleGenAI);
@@ -133,12 +135,24 @@ generateBtn?.addEventListener('click', async () => {
     const styleLabel = styleMap[style] || style;
 
     const systemInstruction = isChinese 
-      ? `您是一位聪明的马来西亚旅游规划师。请根据用户输入创建个性化的旅游行程。不要使用星号 (*) 或井号 (#) 等 markdown 字符。仅使用纯文本。`
-      : `You are a smart Malaysia travel planner. Create a personalized travel itinerary based on user input. Do NOT use markdown characters like asterisks (*) or hashtags (#). Use plain text only.`;
+      ? `您是一位专业的马来西亚旅游规划师。请为用户生成一份详细且实用的中文旅游行程。
+格式要求：
+1. 仅使用纯文本，严禁使用任何 Markdown 符号（如 #, *, -, **）。
+2. 每日行程请以 "第 X 天：" 开头。
+3. 每日包含：上午、下午、晚上。
+4. 包含具体景点名称。
+5. 总长度请控制在 1500 字以内。`
+      : `You are a professional Malaysia travel planner. Create a detailed and practical travel itinerary.
+Format requirements:
+1. Use plain text only. Strictly NO Markdown symbols (like #, *, -, **).
+2. Start each day with "Day X:".
+3. Include Morning, Afternoon, and Evening activities.
+4. Include specific attraction names.
+5. Keep the total length under 1500 words.`;
 
     const userPrompt = isChinese 
-      ? `目的地：${destination}，天数：${days}，旅行风格：${styleLabel}。请生成行程。`
-      : `Destination: ${destination}, Days: ${days}, Style: ${styleLabel}. Please generate the itinerary.`;
+      ? `请为我规划去 ${destination} 的行程，共 ${days} 天，风格是 ${styleLabel}。请提供每日详细安排。`
+      : `Please plan a ${days}-day ${styleLabel} trip to ${destination}. Provide a detailed daily schedule.`;
 
     const modelName = "gemini-3-flash-preview";
     console.log('Generating itinerary with model:', modelName);
@@ -152,7 +166,7 @@ generateBtn?.addEventListener('click', async () => {
       
       const config: any = {
         systemInstruction: instruction,
-        maxOutputTokens: 2048
+        maxOutputTokens: 4096
       };
       
       if (thinking) {
@@ -169,30 +183,38 @@ generateBtn?.addEventListener('click', async () => {
     };
 
     try {
-      console.log('Attempting with gemini-3-flash-preview...');
-      debugOverlay.textContent = 'Planner Script: Calling Gemini 3 (30s)...';
-      response = await callWithTimeout("gemini-3-flash-preview", userPrompt, systemInstruction, 30000, true);
+      if (isChinese) {
+        console.log('Attempting with gemini-3.1-flash-lite-preview (Primary for Chinese)...');
+        debugOverlay.textContent = 'Planner Script: Calling Flash Lite (30s)...';
+        response = await callWithTimeout("gemini-3.1-flash-lite-preview", userPrompt, systemInstruction, 30000);
+      } else {
+        console.log('Attempting with gemini-3-flash-preview...');
+        debugOverlay.textContent = 'Planner Script: Calling Gemini 3 (30s)...';
+        response = await callWithTimeout("gemini-3-flash-preview", userPrompt, systemInstruction, 30000);
+      }
     } catch (e1: any) {
-      console.warn('gemini-3-flash-preview failed:', e1);
-      debugOverlay.textContent = 'G3 Error: ' + (e1.message || 'Failed');
+      console.warn('Primary model failed:', e1);
+      debugOverlay.textContent = 'Primary Error: ' + (e1.message || 'Failed');
       debugOverlay.style.background = 'rgba(255,165,0,0.7)';
       
       try {
-        console.log('Attempting with gemini-flash-latest...');
-        debugOverlay.textContent = 'Planner Script: Calling Flash Latest (20s)...';
-        response = await callWithTimeout("gemini-flash-latest", userPrompt, systemInstruction, 20000);
+        const fallbackModel = isChinese ? "gemini-3-flash-preview" : "gemini-flash-latest";
+        console.log(`Attempting with fallback: ${fallbackModel}...`);
+        debugOverlay.textContent = `Planner Script: Calling ${fallbackModel} (20s)...`;
+        response = await callWithTimeout(fallbackModel, userPrompt, systemInstruction, 20000);
       } catch (e2: any) {
-        console.warn('gemini-flash-latest failed:', e2);
-        debugOverlay.textContent = 'Flash Error: ' + (e2.message || 'Failed');
+        console.warn('First fallback failed:', e2);
+        debugOverlay.textContent = 'Fallback Error: ' + (e2.message || 'Failed');
         
         try {
-          console.log('Attempting with gemini-3.1-flash-lite-preview...');
-          debugOverlay.textContent = 'Planner Script: Calling Flash Lite (15s)...';
-          response = await callWithTimeout("gemini-3.1-flash-lite-preview", userPrompt, systemInstruction, 15000);
+          const finalFallback = isChinese ? "gemini-flash-latest" : "gemini-3.1-flash-lite-preview";
+          console.log(`Attempting with final fallback: ${finalFallback}...`);
+          debugOverlay.textContent = `Planner Script: Calling ${finalFallback} (15s)...`;
+          response = await callWithTimeout(finalFallback, userPrompt, systemInstruction, 15000);
         } catch (e3: any) {
-          console.warn('gemini-3.1-flash-lite-preview failed:', e3);
-          debugOverlay.textContent = 'Lite Error: ' + (e3.message || 'Failed');
-          throw e3; // Re-throw to be caught by outer catch
+          console.warn('Final fallback failed:', e3);
+          debugOverlay.textContent = 'Final Error: ' + (e3.message || 'Failed');
+          throw e3;
         }
       }
     }
@@ -250,60 +272,51 @@ downloadPdfBtn?.addEventListener('click', async () => {
     printContainer.style.position = 'absolute';
     printContainer.style.left = '-9999px';
     printContainer.style.top = '0';
-    printContainer.style.width = '800px'; // Fixed width for consistent rendering
-    printContainer.style.padding = '40px';
+    printContainer.style.width = '850px'; // Slightly wider for better proportions
+    printContainer.style.padding = '60px';
     printContainer.style.background = '#ffffff';
     printContainer.style.color = '#1f2937';
     printContainer.style.fontFamily = '"Inter", "PingFang SC", "Microsoft YaHei", sans-serif';
 
+    // Header Section for alignment
+    const header = document.createElement('div');
+    header.style.marginBottom = '40px';
+    header.style.borderBottom = '1px solid #e5e7eb';
+    header.style.paddingBottom = '20px';
+
     const title = document.createElement('h1');
-    title.style.fontSize = '28px';
+    title.style.fontSize = '32px';
     title.style.color = '#0a1d37';
-    title.style.marginBottom = '10px';
+    title.style.margin = '0 0 12px 0';
     title.style.fontFamily = '"Playfair Display", serif';
+    title.style.fontWeight = '700';
     title.textContent = isChinese ? "您的马来西亚旅游行程" : "Your Malaysia Travel Itinerary";
-    printContainer.appendChild(title);
+    header.appendChild(title);
 
     const date = document.createElement('p');
-    date.style.fontSize = '14px';
+    date.style.fontSize = '16px';
     date.style.color = '#6b7280';
-    date.style.marginBottom = '30px';
+    date.style.margin = '0';
     date.textContent = `${isChinese ? "生成日期" : "Generated on"}: ${new Date().toLocaleDateString()}`;
-    printContainer.appendChild(date);
+    header.appendChild(date);
+    
+    printContainer.appendChild(header);
 
     const content = document.createElement('div');
     content.style.whiteSpace = 'pre-wrap';
-    content.style.fontSize = '16px';
-    content.style.lineHeight = '1.8';
-    content.style.padding = '30px';
-    content.style.background = '#f7f8fa';
-    content.style.borderRadius = '8px';
-    content.style.borderLeft = '5px solid #c6a24b';
+    content.style.fontSize = '18px';
+    content.style.lineHeight = '1.7';
+    content.style.padding = '40px';
+    content.style.background = '#f9fafb';
+    content.style.borderRadius = '12px';
+    content.style.borderLeft = '8px solid #c6a24b';
+    content.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.02)';
     content.textContent = currentItinerary;
     printContainer.appendChild(content);
 
-    const footer = document.createElement('div');
-    footer.style.marginTop = '40px';
-    footer.style.textAlign = 'center';
-    footer.style.borderTop = '1px solid #e5e7eb';
-    footer.style.paddingTop = '20px';
-    
-    const footerText1 = document.createElement('p');
-    footerText1.style.fontSize = '14px';
-    footerText1.style.color = '#c6a24b';
-    footerText1.style.fontStyle = 'italic';
-    footerText1.style.margin = '0';
-    footerText1.textContent = isChinese ? "S9Trip - 马来西亚导游与数字游民" : "S9Trip - Malaysia Tourist Guide & Digital Nomad";
-    footer.appendChild(footerText1);
+    // Removed the HTML footer to prevent double-branding on the last page
+    // Branding is now handled exclusively by the jsPDF addFooterBranding function
 
-    const footerText2 = document.createElement('p');
-    footerText2.style.fontSize = '12px';
-    footerText2.style.color = '#9ca3af';
-    footerText2.style.margin = '5px 0 0 0';
-    footerText2.textContent = "www.s9trip.com | Real Experiences, Real People";
-    footer.appendChild(footerText2);
-
-    printContainer.appendChild(footer);
     document.body.appendChild(printContainer);
 
     // Capture the entire container
@@ -322,43 +335,56 @@ downloadPdfBtn?.addEventListener('click', async () => {
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
     
-    const margin = 10;
-    const footerHeight = 20;
-    const effectivePageHeight = pageHeight - (margin * 2) - footerHeight;
+    const margin = 15; // Increased margin for better look
+    const footerAreaHeight = 30; // Increased footer area
+    const effectivePageHeight = pageHeight - (margin * 2) - footerAreaHeight; 
     
     const imgWidth = pageWidth - (margin * 2);
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
     const addFooterBranding = (pdfDoc: jsPDF) => {
       const footerY = pageHeight - 15;
-      pdfDoc.setFont("helvetica", "italic");
-      pdfDoc.setFontSize(9);
-      pdfDoc.setTextColor(198, 162, 75); // Gold
-      pdfDoc.text(isChinese ? "S9Trip - 马来西亚导游与数字游民" : "S9Trip - Malaysia Tourist Guide & Digital Nomad", pageWidth / 2, footerY, { align: "center" });
+      // Draw a white rectangle to cover any image overflow behind the footer
+      pdfDoc.setFillColor(255, 255, 255);
+      pdfDoc.rect(0, pageHeight - footerAreaHeight, pageWidth, footerAreaHeight, 'F');
+      
+      pdfDoc.setFont("helvetica", "bold");
+      pdfDoc.setFontSize(10);
+      pdfDoc.setTextColor(10, 29, 55); // Navy
+      pdfDoc.text("Curated by S9Trip.com", pageWidth / 2, footerY, { align: "center" });
+      
       pdfDoc.setFont("helvetica", "normal");
-      pdfDoc.setFontSize(8);
+      pdfDoc.setFontSize(9);
       pdfDoc.setTextColor(156, 163, 175);
-      pdfDoc.text("www.s9trip.com | Real Experiences, Real People", pageWidth / 2, footerY + 5, { align: "center" });
+      pdfDoc.text("Travel smarter, travel seamlessly", pageWidth / 2, footerY + 5, { align: "center" });
+    };
+
+    const addHeaderMask = (pdfDoc: jsPDF) => {
+      // Draw a white rectangle at the top to preserve the header margin on subsequent pages
+      pdfDoc.setFillColor(255, 255, 255);
+      pdfDoc.rect(0, 0, pageWidth, margin, 'F');
     };
 
     // Handle multi-page
     let heightLeft = imgHeight;
     let position = margin;
-    let page = 1;
+    let pageCount = 0;
 
     // First page
     doc.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
     addFooterBranding(doc);
+    // No header mask needed for first page as it has the real header
     heightLeft -= effectivePageHeight;
 
     // Subsequent pages
     while (heightLeft > 0) {
+      pageCount++;
       doc.addPage();
-      position = margin - (effectivePageHeight * page);
+      position = margin - (effectivePageHeight * pageCount);
       doc.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
-      addFooterBranding(doc);
+      addHeaderMask(doc); // Cover the bleed from previous page
+      addFooterBranding(doc); // Cover the bleed into the footer
       heightLeft -= effectivePageHeight;
-      page++;
     }
 
     doc.save(`S9Trip-Itinerary-${destinationInput.value || 'Malaysia'}.pdf`);
@@ -369,4 +395,94 @@ downloadPdfBtn?.addEventListener('click', async () => {
     downloadPdfBtn.textContent = originalBtnText;
     downloadPdfBtn.disabled = false;
   }
+});
+
+const getShareLinkBtn = document.getElementById('get-share-link-btn');
+const shareLinkContainer = document.getElementById('share-link-container');
+const shareLinkInput = document.getElementById('share-link-input') as HTMLInputElement;
+const copyShareLinkBtn = document.getElementById('copy-share-link-btn');
+
+// Check for shared itinerary on load
+const urlParams = new URLSearchParams(window.location.search);
+const sharedId = urlParams.get('share');
+if (sharedId) {
+  loadSharedItinerary(sharedId);
+}
+
+async function loadSharedItinerary(id: string) {
+  if (loadingSpinner) loadingSpinner.style.display = 'block';
+  debugOverlay.textContent = 'Planner Script: Loading shared itinerary...';
+  
+  try {
+    const docRef = doc(db, "itineraries", id);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      currentItinerary = data.content;
+      if (itineraryOutput) {
+        itineraryOutput.style.display = 'block';
+        itineraryOutput.textContent = currentItinerary;
+        if (plannerActions) {
+          plannerActions.style.display = 'flex';
+          plannerActions.style.flexWrap = 'wrap';
+          plannerActions.style.justifyContent = 'center';
+          plannerActions.style.gap = '10px';
+        }
+      }
+      if (destinationInput) destinationInput.value = data.destination || '';
+      debugOverlay.textContent = 'Planner Script: Shared itinerary loaded';
+    } else {
+      showUIError(isChinese ? '找不到分享的行程。' : 'Shared itinerary not found.');
+    }
+  } catch (error) {
+    console.error('Error loading shared itinerary:', error);
+    showUIError(isChinese ? '加载分享行程时出错。' : 'Error loading shared itinerary.');
+  } finally {
+    if (loadingSpinner) loadingSpinner.style.display = 'none';
+  }
+}
+
+getShareLinkBtn?.addEventListener('click', async () => {
+  if (!currentItinerary) return;
+  
+  const originalText = getShareLinkBtn.textContent;
+  getShareLinkBtn.textContent = isChinese ? '正在生成链接...' : 'Generating link...';
+  (getShareLinkBtn as HTMLButtonElement).disabled = true;
+  
+  try {
+    const docRef = await addDoc(collection(db, "itineraries"), {
+      content: currentItinerary,
+      destination: destinationInput?.value || '',
+      days: daysInput?.value || '',
+      style: styleSelect?.value || '',
+      lang: isChinese ? 'zh' : 'en',
+      createdAt: serverTimestamp()
+    });
+    
+    const shareUrl = `${window.location.origin}${window.location.pathname}?share=${docRef.id}`;
+    if (shareLinkInput) shareLinkInput.value = shareUrl;
+    if (shareLinkContainer) shareLinkContainer.style.display = 'block';
+    
+    if (shareLinkContainer) shareLinkContainer.scrollIntoView({ behavior: 'smooth' });
+    
+  } catch (error) {
+    console.error('Error creating share link:', error);
+    alert(isChinese ? '创建分享链接失败。' : 'Failed to create share link.');
+  } finally {
+    getShareLinkBtn.textContent = originalText;
+    (getShareLinkBtn as HTMLButtonElement).disabled = false;
+  }
+});
+
+copyShareLinkBtn?.addEventListener('click', () => {
+  if (!shareLinkInput) return;
+  shareLinkInput.select();
+  navigator.clipboard.writeText(shareLinkInput.value).then(() => {
+    const originalText = copyShareLinkBtn.textContent;
+    copyShareLinkBtn.textContent = isChinese ? '已复制！' : 'Copied!';
+    setTimeout(() => {
+      copyShareLinkBtn.textContent = originalText;
+    }, 2000);
+  });
 });
