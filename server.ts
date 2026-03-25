@@ -55,7 +55,11 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     // In production, serve from dist
-    const distPath = path.resolve(__dirname, 'dist');
+    // If running from dist/server.js, __dirname is dist/
+    // If running from server.ts (dev/tsx), __dirname is root
+    const distPath = __dirname.endsWith('dist') ? __dirname : path.resolve(__dirname, 'dist');
+    
+    console.log('Production mode: Serving static files from', distPath);
     
     if (fs.existsSync(distPath)) {
       app.use(express.static(distPath, {
