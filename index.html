@@ -468,76 +468,6 @@ footer{
   .hamburger{display:none}
 }
 
-/* ===== Travel Planner ===== */
-.travel-planner {
-  background: #fff;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-  margin: 3rem 0;
-}
-.travel-planner h2 {
-  color: var(--navy);
-  margin-top: 0;
-}
-.planner-form {
-  display: grid;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-@media (min-width: 768px) {
-  .planner-form {
-    grid-template-columns: 1fr 1fr 1fr;
-    align-items: end;
-  }
-}
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-.form-group label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-.form-group input, .form-group select {
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 1rem;
-}
-.planner-btn {
-  background: var(--gold);
-  color: #fff;
-  border: none;
-  padding: 1rem;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
-}
-.planner-btn:hover {
-  background: var(--navy);
-}
-.itinerary-result {
-  background: var(--bg);
-  padding: 1.5rem;
-  border-radius: 8px;
-  border-left: 4px solid var(--gold);
-  white-space: pre-wrap;
-  display: none;
-  font-size: 0.95rem;
-  line-height: 1.6;
-}
-.loading-spinner {
-  display: none;
-  text-align: center;
-  margin: 1rem 0;
-  font-weight: 600;
-  color: var(--navy);
-}
-
 </style>
 
 <script async src="https://js.stripe.com/v3/buy-button.js"></script>
@@ -634,47 +564,6 @@ footer{
   <p>
     At heart, I remain a Malaysia tourist guide and outbound tour leader, combining on-the-ground experience with modern digital tools to support travellers from around the world.
   </p>
-</section>
-
-<section class="travel-planner">
-  <h2>Smart Malaysia Travel Planner</h2>
-  <p><strong>100% Free!</strong> Get a personalized AI-generated itinerary in seconds. Just tell me where you're going!</p>
-  
-  <div class="planner-form">
-    <div class="form-group">
-      <label for="destination">Destination (e.g., Kuala Lumpur, Penang, Langkawi)</label>
-      <input type="text" id="destination" placeholder="Where to?">
-    </div>
-    <div class="form-group">
-      <label for="days">Number of Days</label>
-      <input type="number" id="days" min="1" max="14" value="3">
-    </div>
-    <div class="form-group">
-      <label for="style">Travel Style</label>
-      <select id="style">
-        <option value="relax">Relax</option>
-        <option value="food">Foodie</option>
-        <option value="adventure">Adventure</option>
-        <option value="shopping">Shopping</option>
-      </select>
-    </div>
-    <button class="planner-btn" id="generate-btn">Generate My Itinerary</button>
-  </div>
-
-  <div class="loading-spinner" id="planner-loading">
-    Generating your perfect trip...
-  </div>
-
-  <div class="itinerary-result" id="itinerary-output"></div>
-  <div id="planner-actions" style="display: none; margin-top: 1.5rem; text-align: center; gap: 10px; flex-wrap: wrap; justify-content: center;">
-    <button class="planner-btn" id="download-pdf-btn" style="background: var(--navy); margin: 5px;">Download as PDF</button>
-    <button class="planner-btn" id="get-share-link-btn" style="background: var(--navy); margin: 5px;">Get Share Link</button>
-  </div>
-  <div id="share-link-container" style="display: none; margin-top: 1rem; padding: 1rem; background: #f3f4f6; border-radius: 8px; text-align: center;">
-    <p style="margin-bottom: 0.5rem; font-weight: 600;" id="share-link-label">Share Link:</p>
-    <input type="text" id="share-link-input" readonly style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; margin-bottom: 0.5rem;">
-    <button class="planner-btn" id="copy-share-link-btn" style="background: var(--navy); font-size: 0.8rem; padding: 0.4rem 1rem;">Copy Link</button>
-  </div>
 </section>
 
 <section class="album">
@@ -855,7 +744,6 @@ document.addEventListener('keydown', e=>{
 </script>
 
 <script type="module" src="/src/wakeup.ts"></script>
-<script type="module" src="/planner.ts"></script>
 
 </body>
 </html>

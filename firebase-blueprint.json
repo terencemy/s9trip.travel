@@ -1,24 +1,4 @@
 {
-  "entities": {
-    "itinerary": {
-      "title": "Itinerary",
-      "description": "A travel itinerary generated for a user.",
-      "type": "object",
-      "properties": {
-        "content": { "type": "string", "description": "The full text of the itinerary." },
-        "destination": { "type": "string", "description": "The destination of the trip." },
-        "days": { "type": "string", "description": "The duration of the trip." },
-        "style": { "type": "string", "description": "The travel style." },
-        "lang": { "type": "string", "description": "The language of the itinerary (en/zh)." },
-        "createdAt": { "type": "string", "format": "date-time", "description": "When the itinerary was created." }
-      },
-      "required": ["content", "destination", "createdAt"]
-    }
-  },
-  "firestore": {
-    "/itineraries/{itineraryId}": {
-      "schema": "itinerary",
-      "description": "Publicly shared itineraries."
-    }
-  }
+  "entities": {},
+  "firestore": {}
 }
