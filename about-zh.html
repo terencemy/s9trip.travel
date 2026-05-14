@@ -241,14 +241,16 @@ function scrollToTop(){
 <script>
 // Suppress Tawk.to internal errors that clutter the console
 window.addEventListener('error', function(event) {
-  if (event.message && (event.message.includes('Tawk') || event.message.includes('getForm') || event.message.includes('Socket server'))) {
+  var msg = event.message || '';
+  if (msg.includes('Tawk') || msg.includes('getForm') || msg.includes('Socket server') || msg.includes('i18next')) {
     event.preventDefault();
-    console.warn('Suppressed third-party widget error:', event.message);
+    console.warn('Suppressed third-party widget error:', msg);
   }
 }, true);
 
 // Robust Tawk.to loading
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+Tawk_API.lang = 'zh';
 (function(){
   var s1=document.createElement("script"),
       s0=document.getElementsByTagName("script")[0];
