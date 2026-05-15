@@ -1,6 +1,18 @@
 User-agent: *
 Allow: /
 
+# Welcoming AI Agents for crawling
+User-agent: GPTBot
+Allow: /
+User-agent: CCBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: anthropic-ai
+Allow: /
+User-agent: Claude-Web
+Allow: /
+
 # Block system / non-content paths (optional but clean)
 Disallow: /assets/private/
 Disallow: /tmp/

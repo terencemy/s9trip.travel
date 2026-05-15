@@ -95,6 +95,27 @@ async function wakeUpServer() {
     (overlay as HTMLElement).style.opacity = '0';
     setTimeout(() => (overlay as HTMLElement)?.remove(), 500);
   }
+  // Start background keep-alive to prevent sleeping while the tab is open
+  startBackgroundKeepAlive();
+}
+
+/**
+ * Background ping to /api/health every 5 minutes
+ */
+function startBackgroundKeepAlive() {
+  const FIVE_MINUTES = 5 * 60 * 1000;
+  setInterval(async () => {
+    try {
+      // Quiet ping to keep server active
+      await fetch('/api/health', { 
+        method: 'GET',
+        headers: { 'Cache-Control': 'no-cache' }
+      });
+      console.log('Background server keep-alive successful');
+    } catch (e) {
+      // Intentionally ignore background errors to avoid user disruption
+    }
+  }, FIVE_MINUTES);
 }
 
 // Start wake up process when DOM is ready
