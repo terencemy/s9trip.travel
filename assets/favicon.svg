@@ -15,26 +15,26 @@
            L22.5 7.5 
            C21 5 18.5 4 16 4 Z" fill="black"/> 
   
-  <!-- Longer Body (GitHub style base) -->
+  <!-- Longer and Wider Body (GitHub style base, filling the bottom curve) -->
   <path d="M16 20 
-           C11 20 9 23 9 27 
-           L9 31 
-           L23 31 
-           L23 27 
-           C23 23 21 20 16 20 Z" fill="black"/>
+           C11 20 7 23 5 28 
+           L4 32 
+           L28 32 
+           L27 28 
+           C25 23 21 20 16 20 Z" fill="black"/>
            
   <!-- Fluffy Iconic Tail on the Right -->
   <path d="M23 24 
-           C27 24 30 22 30 18 
-           C30 14 27 12 25 12 
+           C27 24 30.5 22 30.5 18 
+           C30.5 14 27 12 25 12 
            C23.5 12 22 13.5 22 15.5 
            C22 17.5 23.5 19 25 19 
            C26 19 27 18 27 17 
            C27 18.5 26 20 25 20 
            C23 20 22 18 22 15.5 
            C22 13 24 11 26 11 
-           C28.5 11 31 14 31 18 
-           C31 23 27 26 23 26" fill="black"/>
+           C28.5 11 31.5 14 31.5 18 
+           C31.5 23 27 26 23 26" fill="black"/>
 
   <!-- Iconic Grin (cutout) -->
   <path d="M11 13 Q16 19 21 13 Q16 17 11 13 Z" fill="white"/>
