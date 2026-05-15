@@ -15,17 +15,17 @@
            L22.5 7.5 
            C21 5 18.5 4 16 4 Z" fill="black"/> 
   
-  <!-- Longer and Wider Body (GitHub style base, filling the bottom curve) -->
+  <!-- Longer and Thinner Body (GitHub style base, filling the bottom curve) -->
   <path d="M16 20 
-           C11 20 7 23 5 28 
-           L4 32 
-           L28 32 
-           L27 28 
-           C25 23 21 20 16 20 Z" fill="black"/>
+           C13 20 10 23 10 28 
+           L10 32 
+           L22 32 
+           L22 28 
+           C22 23 19 20 16 20 Z" fill="black"/>
            
   <!-- Fluffy Iconic Tail on the Right -->
-  <path d="M23 24 
-           C27 24 30.5 22 30.5 18 
+  <path d="M22 24 
+           C26 24 30.5 22 30.5 18 
            C30.5 14 27 12 25 12 
            C23.5 12 22 13.5 22 15.5 
            C22 17.5 23.5 19 25 19 
