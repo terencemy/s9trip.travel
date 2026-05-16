@@ -69,6 +69,7 @@ async function wakeUpServer() {
           (overlay as HTMLElement).style.opacity = '0';
           setTimeout(() => (overlay as HTMLElement)?.remove(), 500);
         }
+        startBackgroundKeepAlive();
         return; 
       }
     } catch (error) {
@@ -104,16 +105,23 @@ async function wakeUpServer() {
  */
 function startBackgroundKeepAlive() {
   const FIVE_MINUTES = 5 * 60 * 1000;
+  console.log('Keep-alive system started. Will ping server every 5 minutes.');
+  
   setInterval(async () => {
+    const timestamp = new Date().toLocaleTimeString();
     try {
       // Quiet ping to keep server active
-      await fetch('/api/health', { 
+      const response = await fetch('/api/health', { 
         method: 'GET',
         headers: { 'Cache-Control': 'no-cache' }
       });
-      console.log('Background server keep-alive successful');
+      if (response.ok) {
+        console.log(`[${timestamp}] Background server keep-alive successful`);
+      } else {
+        console.warn(`[${timestamp}] Background keep-alive returned status: ${response.status}`);
+      }
     } catch (e) {
-      // Intentionally ignore background errors to avoid user disruption
+      console.error(`[${timestamp}] Background keep-alive failed:`, e);
     }
   }, FIVE_MINUTES);
 }
