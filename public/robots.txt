@@ -1,6 +1,10 @@
 User-agent: *
 Allow: /
 
+# Welcoming Googlebot specifically
+User-agent: Googlebot
+Allow: /
+
 # Welcoming AI Agents for crawling
 User-agent: GPTBot
 Allow: /

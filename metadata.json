@@ -1,5 +1,6 @@
 {
   "name": "S9Trip",
   "description": "Malaysia Tourist Guide and Digital Nomad travel support. Featuring a quick-access website tiles interface for easy navigation.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
